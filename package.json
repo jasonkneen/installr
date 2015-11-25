@@ -17,13 +17,10 @@
     "url": "https://github.com/jasonkneen/installr"
   },
   "keywords": [
-    "ios",
+    "installrapp",
     "titanium",
-    "appcelerator",
-    "cli",
-    "TiApp",
-    "theme",
-    "alloy"
+    "installr",
+    "cli"    
   ],
   "author": "Jason Kneen",
   "license": "Apache Public License v2",

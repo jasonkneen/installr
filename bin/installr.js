@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
+// need to make this configurable
 var iTunesPath = "~/music/iTunes/iTunes\ Media/Mobile\ Applications/";
 
+// need to make this configurable
 var gitLog = 'git log --since=today --pretty="- %s"'
 
 var program = require('commander'),
@@ -16,14 +18,6 @@ var program = require('commander'),
     path = require('path'),
     _ = require('underscore'),
     Table = require('cli-table');
-
-// check if the TiApp.xml an TiCh config file exists
-if (!fs.existsSync('./tiapp.xml')) {
-    console.log(chalk.red('Please run in a Titanium project folder'));
-} else {
-    installrapp();
-}
-
 
 function listApps(params) {
 
@@ -119,12 +113,12 @@ function installrapp() {
         .version(pkg.version, '-v, --version')
         .usage('[options]')
         .description(pkg.description)
-        .option('-u, --upload [location]', 'Uploads the latest build from iTunes / dist folder')
+        .option('-u, --upload [filename]', 'Uploads an app to installr --- checks for iTunes ipa, current folder, specific path')
         .option('-l, --list', 'Lists apps')
         .option('-n, --notes <notes>', 'Release notes')
         .option('-e, --emails <emails>', 'Comma-separated list of emails to send to')
-        .option('-t, --teams <names>', 'Comma-separated list of teams to send to')
-        .option('-c, --token <token>', 'Set the API token to use')
+        .option('-t, --teams <names>', 'Comma-separated list of team names to send to')
+        .option('-c, --token <token>', 'Set the installrapp API token to use')
 
     program.parse(process.argv);
 
