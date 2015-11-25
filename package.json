@@ -1,6 +1,6 @@
 {
   "name": "installr",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Installr (www.installrapp.com) - CLI.",
   "main": "index.js",
   "bin": {
