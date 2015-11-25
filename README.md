@@ -26,6 +26,10 @@ $ installr upload MyApp.ipa --token <YOURAPITOKEN> --notes "- Added some cool fe
 ```
 Suggestions, improvements, PRs, welcome!
 
+### Thanks to
+
+- [amitkothari](https://github.com/amitkothari) for [ti-installr-hook](https://github.com/amitkothari/ti-installr-hook) for inspiration for this
+
 ##License
 Copyright 2015 Jason Kneen
 
