@@ -24,6 +24,16 @@ $ installr list --token <YOURAPITOKEN>
 ```
 $ installr upload MyApp.ipa --token <YOURAPITOKEN> --notes "- Added some cool features" --emails "hello@bouncingfish.com" --teams "QA"
 ```
+
+If you don't specify the release notes a default command of:
+
+```
+git log --since=today --pretty="- %s"
+```
+
+will be used to give you a list of any commits you've just done. (will add some customisation for this soon)
+
+
 Suggestions, improvements, PRs, welcome!
 
 ### Thanks to
