@@ -169,3 +169,7 @@ function installrapp() {
         listApps(params);
     }
 }
+
+
+installrapp();
+
