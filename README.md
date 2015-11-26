@@ -25,9 +25,6 @@ $ installr list --token <YOURAPITOKEN>
 $ installr upload MyApp.ipa --token <YOURAPITOKEN> --notes "- Added some cool features" --emails "hello@bouncingfish.com" --teams "QA"
 ```
 
-If you don't specify the release notes it will default to checking the specified IPA / APK creation date, and then using git log to get the commits SINCE that date.
-
-
 Suggestions, improvements, PRs, welcome!
 
 ### Thanks to
