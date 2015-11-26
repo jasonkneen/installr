@@ -25,6 +25,15 @@ $ installr list --token <YOURAPITOKEN>
 $ installr upload MyApp.ipa --token <YOURAPITOKEN> --notes "- Added some cool features" --emails "hello@bouncingfish.com" --teams "QA"
 ```
 
+## Titanium support
+
+If you're using Titanium, you can put your installr token in the tiapp.xml file
+
+```<property name="installr_token" type="string">TOKEN</property>
+```
+
+and it'll be read from there.
+
 ## Automatically generate relase notes from git log
 
 If you want to auto-create release notes, do small commits in git, and when it comes to uploading instead of specifying the notes, specify the bundleId of the app:
