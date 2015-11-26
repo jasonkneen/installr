@@ -4,9 +4,7 @@ Allows you to use the basics of the installapp API from the CLI -- useful for sc
 
 ## Why?
 
-I use installrapp.com to distribute mobile apps and having already scripted my app builds, I wanted to script the installr part so I could script the entire build process, from generation of the builds to upload.
-
-I also included a feature that allowed me to do small commits in Git, and have the CLI pull these out and use them for my release notes.
+I use installrapp.com to distribute mobile apps and having already scripted my app builds (for dev / test and appstore, playstore), I wanted to script installr so I could upload them afterwars. They key thing for me was making it as automated as possible -- so I wanted something where I can just issue a command and add some emails and the build would be uploaded, the release notes generated from git logs since the last build, and then emailed out to the emails specified.
 
 ## Install [![NPM version](https://badge.fury.io/js/installr.svg)](http://badge.fury.io/js/installr)
 
