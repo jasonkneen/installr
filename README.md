@@ -25,13 +25,7 @@ $ installr list --token <YOURAPITOKEN>
 $ installr upload MyApp.ipa --token <YOURAPITOKEN> --notes "- Added some cool features" --emails "hello@bouncingfish.com" --teams "QA"
 ```
 
-If you don't specify the release notes a default command of:
-
-```
-git log --since=today --pretty="- %s"
-```
-
-will be used to give you a list of any commits you've just done. (will add some customisation for this soon)
+If you don't specify the release notes it will default to checking the specified IPA / APK creation date, and then using git log to get the commits SINCE that date.
 
 
 Suggestions, improvements, PRs, welcome!
