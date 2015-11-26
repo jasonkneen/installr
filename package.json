@@ -1,6 +1,6 @@
 {
   "name": "installr",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Installr (www.installrapp.com) - CLI.",
   "main": "index.js",
   "bin": {
@@ -36,6 +36,8 @@
      "fields": "~0.1.24",
      "node-appc": "~0.2.0",
      "cli-table" : "~@0.3.1",
-     "underscore" : "~@1.8.3"
+     "underscore" : "~@1.8.3",
+     "exec-sync2" : "@0.1.0",
+     "moment": "@2.10.6"
   }
 }

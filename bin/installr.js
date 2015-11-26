@@ -12,12 +12,14 @@ var program = require('commander'),
     fs = require('fs'),
     afs = require('node-appc').fs,
     pkg = require('../package.json'),
-    exec = require('child_process').exec,
+    exec = require('exec-sync2'),
     request = require('request'),
     fields = require('fields'),
     path = require('path'),
     _ = require('underscore'),
-    Table = require('cli-table');
+    Table = require('cli-table'),
+    moment = require('moment'),
+    params = {};
 
 function listApps(params) {
 
@@ -45,6 +47,7 @@ function listApps(params) {
     });
 }
 
+
 function uploadApp(params) {
     console.log(chalk.yellow('Uploading app to installr'));
 
@@ -56,7 +59,6 @@ function uploadApp(params) {
     }, function(err, httpResponse, body) {
         if (err) {
             console.log(err);
-            finished();
         } else {
 
             console.log(chalk.yellow('App uploaded, sending to testers..'));
@@ -80,21 +82,25 @@ function uploadApp(params) {
             var form = r.form();
 
             form.append('notify', params.emails);
-
         }
     });
 
 
-
     var build_file = afs.resolvePath(params.filePath);
+
+    var lastDate = moment(fs.statSync(build_file).ctime).format();
+
+    params.notes = params.notes || exec('git log --since=' + lastDate + ' --pretty="- %s"');
 
     var form = r.form();
 
     /// specify the file
     form.append('qqfile', fs.createReadStream(build_file));
 
+
     // release notes
     form.append('releaseNotes', params.notes);
+
 
     // team names
     if (params.teams) {
@@ -106,7 +112,7 @@ function uploadApp(params) {
 // main function
 function installrapp() {
 
-    var params = {};
+
 
     // setup CLI
     program
@@ -130,10 +136,6 @@ function installrapp() {
 
     if (program.notes) {
         params.notes = program.notes;
-    } else {
-        exec(gitLog, function(e, out) {
-            params.notes = out;
-        });
     }
 
     if (program.emails) {
@@ -153,12 +155,15 @@ function installrapp() {
 
     if (program.upload) {
 
-        if (fs.existsSync("'" + iTunesPath.toString() + program.upload) + "'") {
-            params.filePath = iTunesPath + program.upload;
-        } else if (fs.existsSync("./dist/" + program.upload)) {
-            params.filePath = "./dist/" + program.upload;
-        } else if (fs.existsSync("./" + program.upload)) {
+        if (fs.existsSync("./" + program.upload)) {
+            console.log("Using local app file");
             params.filePath = "./" + program.upload;
+        } else if (fs.existsSync("./dist/" + program.upload)) {
+            console.log("Using ./dist folder app file");
+            params.filePath = "./dist/" + program.upload;
+        } else if (fs.existsSync("'" + iTunesPath.toString() + program.upload) + "'") {
+            console.log("Using iTunes app file");
+            params.filePath = iTunesPath + program.upload;
         } else {
             console.log(chalk.red('upload file not found!'));
         }
@@ -172,4 +177,3 @@ function installrapp() {
 
 
 installrapp();
-
