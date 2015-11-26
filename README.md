@@ -39,7 +39,7 @@ If you want to auto-create release notes, do small commits in git, and when it c
 $ installr upload MyApp.ipa --bundleId com.jasonkneen.myApp --token <YOURAPITOKEN> --emails "hello@bouncingfish.com" --teams "QA"
 ```
 
-If you specify the bundleId, the CLI will check the last build date of the app in the Installr API, then run a git log from that date and add this to the release notes. Coming soon, the ability to override this and specify a date yourself
+If you specify the bundleId, the CLI will check the last build date of the app in the Installr API, then run a git log from that date and add this to the release notes. If you're using Titanium, the CLI will pick up the app ID from the tiapp.xml file.
 
 
 Suggestions, improvements, PRs, welcome!
