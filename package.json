@@ -1,43 +1,44 @@
 {
-  "name": "installr",
-  "version": "0.0.8",
-  "description": "Installr (www.installrapp.com) - CLI.",
-  "main": "index.js",
-  "bin": {
-    "installr": "./bin/installr.js"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "directories": {
-    "bin": "./bin"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jasonkneen/installr"
-  },
-  "keywords": [
-    "installrapp",
-    "titanium",
-    "installr",
-    "cli"    
-  ],
-  "author": "Jason Kneen",
-  "license": "Apache Public License v2",
-  "bugs": {
-    "url": "https://github.com/jasonkneen/installr/issues"
-  },
-  "homepage": "https://github.com/jasonkneen/installr",
-  "dependencies": {
-    "chalk": "^0.5.1",
-    "commander": "^2.6.0",
-    "update-notifier": "^0.2.2",
-     "request": "~2.34.0",
-     "fields": "~0.1.24",
-     "node-appc": "~0.2.0",
-     "cli-table" : "~@0.3.1",
-     "underscore" : "~@1.8.3",
-     "exec-sync2" : "@0.1.0",
-     "moment": "@2.10.6"
-  }
+    "name": "installr",
+    "version": "0.0.9",
+    "description": "Installr (www.installrapp.com) - CLI.",
+    "main": "index.js",
+    "bin": {
+        "installr": "./bin/installr.js"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "directories": {
+        "bin": "./bin"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/jasonkneen/installr"
+    },
+    "keywords": [
+        "installrapp",
+        "titanium",
+        "installr",
+        "cli"
+    ],
+    "author": "Jason Kneen",
+    "license": "Apache Public License v2",
+    "bugs": {
+        "url": "https://github.com/jasonkneen/installr/issues"
+    },
+    "homepage": "https://github.com/jasonkneen/installr",
+    "dependencies": {
+        "chalk": "^0.5.1",
+        "commander": "^2.6.0",
+        "update-notifier": "^0.2.2",
+        "request": "~2.34.0",
+        "fields": "~0.1.24",
+        "node-appc": "~0.2.0",
+        "cli-table": "~@0.3.1",
+        "underscore": "~@1.8.3",
+        "exec-sync2": "@0.1.0",
+        "moment": "@2.10.6",
+        "tiapp.xml": "@0.2.2"
+    }
 }

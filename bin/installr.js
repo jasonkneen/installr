@@ -19,47 +19,83 @@ var program = require('commander'),
     _ = require('underscore'),
     Table = require('cli-table'),
     moment = require('moment'),
-    params = {};
+    config = {};
 
-function listApps(params) {
 
-    console.log(chalk.yellow('Fetching apps..'));
+function isJSON(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+function listApps(id) {
+
+    console.log(chalk.blue(id ? 'Fetching apps matching ' + id : 'Fetching apps'));
 
     var r = request.get({
         url: 'https://www.installrapp.com/apps.json',
         headers: {
-            'X-InstallrAppToken': params.token
+            'X-InstallrAppToken': config.token
         }
     }, function(err, httpResponse, body) {
+
+        if (!isJSON(body)) {
+            console.log(chalk.red("Error: check the API token is valid"));
+            return;
+        }
         // instantiate
         var table = new Table({
-            head: [chalk.yellow('id'), chalk.yellow('AppId'), chalk.yellow('Platform'), chalk.yellow('Version'), chalk.yellow('buildId'), chalk.yellow('Installs')],
+            head: [chalk.white('id'), chalk.white('AppId'), chalk.white('Platform'), chalk.white('Version'), chalk.white('buildId'), chalk.white('Installs')],
             colWidths: [8, 40, 10, 15, 10, 10]
         });
 
         JSON.parse(body).appList.forEach(function(app) {
-            table.push(
-                [app.id, app.appId, app.type, app.latestBuild.versionNumber, app.latestBuild.id, app.latestBuild.numberInstalled]
-            );
+
+            function writeRow() {
+                table.push(
+                    [ chalk.white(app.id), chalk.white(app.appId),  chalk.white(app.type),  app.latestBuild.versionNumber, app.latestBuild.id, chalk.white(app.latestBuild.numberInstalled)]
+                );
+            }
+
+            if (id && app.appId === id) {
+                writeRow();
+                return;
+            } else if (!id) {
+                writeRow();
+            }
         });
 
         console.log(table.toString());
     });
 }
 
-function getAppDetails(params, callback) {
+function getTiAppConfig() {
+    if (fs.existsSync('./tiapp.xml')) {
+        console.log(chalk.blue("Titanium Project detected"));
+        var tiapp = require('tiapp.xml').load("./tiapp.xml");
+
+        config.tiAppId = tiapp.id;
+        config.token = tiapp.getProperty("installr_token");
+    }
+
+}
+
+function getAppDetails(callback) {
     console.log(chalk.yellow('Fetching specific app details..'));
 
     var r = request.get({
         url: 'https://www.installrapp.com/apps.json',
         headers: {
-            'X-InstallrAppToken': params.token
+            'X-InstallrAppToken': config.token
         }
     }, function(err, httpResponse, body) {
 
         JSON.parse(body).appList.forEach(function(app) {
 
-            if (app.appId == params.bundleId) {
+            if (app.appId == config.bundleId) {
                 callback(app);
             }
         });
@@ -68,13 +104,13 @@ function getAppDetails(params, callback) {
 }
 
 
-function uploadApp(params) {
+function uploadApp() {
     console.log(chalk.yellow('Uploading app to installr'));
 
     var r = request.post({
         url: 'https://www.installrapp.com/apps.json',
         headers: {
-            'X-InstallrAppToken': params.token
+            'X-InstallrAppToken': config.token
         }
     }, function(err, httpResponse, body) {
         if (err) {
@@ -88,28 +124,28 @@ function uploadApp(params) {
             var r = request.post({
                 url: 'https://www.installrapp.com/apps/' + resp.appData.id + '/builds/' + resp.appData.latestBuild.id + '/team.json',
                 headers: {
-                    'X-InstallrAppToken': params.token
+                    'X-InstallrAppToken': config.token
                 }
             }, function(err, httpResponse, body) {
                 if (err) {
                     console.log(chalk.green(err));
                 } else {
-                    console.log(chalk.green('Sent to ' + params.emails));
+                    console.log(chalk.green('Sent to ' + config.emails));
 
                 }
             });
 
             var form = r.form();
 
-            form.append('notify', params.emails);
+            form.append('notify', config.emails);
         }
     });
 
 
-    var build_file = afs.resolvePath(params.filePath);
+    var build_file = afs.resolvePath(config.filePath);
 
-    if (params.latestBuildDate && !params.notes) {        
-        params.notes = exec('git log --since=' + params.latestBuildDate + ' --pretty="- %s"');
+    if (config.latestBuildDate && !config.notes) {
+        config.notes = exec('git log --since=' + config.latestBuildDate + ' --pretty="- %s"');
     }
 
     var form = r.form();
@@ -119,14 +155,14 @@ function uploadApp(params) {
 
 
     // release notes
-    if (params.notes) {
-        form.append('releaseNotes', params.notes);
+    if (config.notes) {
+        form.append('releaseNotes', config.notes);
     }
 
 
     // team names
-    if (params.teams) {
-        form.append('notify', params.teams);
+    if (config.teams) {
+        form.append('notify', config.teams);
     }
 
 }
@@ -134,13 +170,15 @@ function uploadApp(params) {
 // main function
 function installrapp() {
 
+    getTiAppConfig();
+
     // setup CLI
     program
         .version(pkg.version, '-v, --version')
         .usage('[options]')
         .description(pkg.description)
         .option('-u, --upload [filename]', 'Uploads an app to installr --- checks for iTunes ipa, current folder, specific path')
-        .option('-l, --list', 'Lists apps')
+        .option('-l, --list <name>', 'Lists apps')
         .option('-n, --notes <notes>', 'Release notes')
         .option('-e, --emails <emails>', 'Comma-separated list of emails to send to')
         .option('-t, --teams <names>', 'Comma-separated list of team names to send to')
@@ -156,58 +194,55 @@ function installrapp() {
     }).notify();
 
     if (program.notes) {
-        params.notes = program.notes;
+        config.notes = program.notes;
     }
 
     if (program.emails) {
-        params.emails = program.emails;
+        config.emails = program.emails;
     }
 
     if (program.teams) {
-        params.teams = program.teams;
+        config.teams = program.teams;
     }
 
     if (program.bundleId) {
-        params.bundleId = program.bundleId;
+        config.bundleId = program.bundleId;
     }
 
     if (program.token) {
-        params.token = program.token;
-    } else {
-        console.log("No API Token");
-        return;
+        config.token = program.token;
     }
 
     if (program.upload) {
 
         if (fs.existsSync("./" + program.upload)) {
             console.log("Using local app file");
-            params.filePath = "./" + program.upload;
+            config.filePath = "./" + program.upload;
         } else if (fs.existsSync("./dist/" + program.upload)) {
             console.log("Using ./dist folder app file");
-            params.filePath = "./dist/" + program.upload;
+            config.filePath = "./dist/" + program.upload;
         } else if (fs.existsSync("'" + iTunesPath.toString() + program.upload) + "'") {
             console.log("Using iTunes app file");
-            params.filePath = iTunesPath + program.upload;
+            config.filePath = iTunesPath + program.upload;
         } else {
             console.log(chalk.red('upload file not found!'));
         }
 
-        if (params.bundleId) {
-            getAppDetails(params, function(app) {
-                params.latestBuildDate = app.latestBuild.dateCreated;                            
-                uploadApp(params);
+        if (config.bundleId) {
+            getAppDetails(config, function(app) {
+                config.latestBuildDate = app.latestBuild.dateCreated;
+                uploadApp();
             });
 
-        
+
         } else {
-            uploadApp(params);
+            uploadApp();
         }
 
-        //uploadApp(params);
+        //uploadApp(config);
 
     } else if (program.list) {
-        listApps(params);
+        listApps(program.list[0]);
     }
 }
 
