@@ -47,6 +47,26 @@ function listApps(params) {
     });
 }
 
+function getAppDetails(params, callback) {
+    console.log(chalk.yellow('Fetching specific app details..'));
+
+    var r = request.get({
+        url: 'https://www.installrapp.com/apps.json',
+        headers: {
+            'X-InstallrAppToken': params.token
+        }
+    }, function(err, httpResponse, body) {
+
+        JSON.parse(body).appList.forEach(function(app) {
+
+            if (app.appId == params.bundleId) {
+                callback(app);
+            }
+        });
+
+    });
+}
+
 
 function uploadApp(params) {
     console.log(chalk.yellow('Uploading app to installr'));
@@ -88,9 +108,9 @@ function uploadApp(params) {
 
     var build_file = afs.resolvePath(params.filePath);
 
-    var lastDate = moment(fs.statSync(build_file).ctime).format();
-
-    params.notes = params.notes || exec('git log --since=' + lastDate + ' --pretty="- %s"');
+    if (params.latestBuildDate && !params.notes) {        
+        params.notes = exec('git log --since=' + params.latestBuildDate + ' --pretty="- %s"');
+    }
 
     var form = r.form();
 
@@ -99,7 +119,9 @@ function uploadApp(params) {
 
 
     // release notes
-    form.append('releaseNotes', params.notes);
+    if (params.notes) {
+        form.append('releaseNotes', params.notes);
+    }
 
 
     // team names
@@ -112,8 +134,6 @@ function uploadApp(params) {
 // main function
 function installrapp() {
 
-
-
     // setup CLI
     program
         .version(pkg.version, '-v, --version')
@@ -125,6 +145,7 @@ function installrapp() {
         .option('-e, --emails <emails>', 'Comma-separated list of emails to send to')
         .option('-t, --teams <names>', 'Comma-separated list of team names to send to')
         .option('-c, --token <token>', 'Set the installrapp API token to use')
+        .option('-b, --bundleId <id>', 'The bundleId of the app')
 
     program.parse(process.argv);
 
@@ -144,6 +165,10 @@ function installrapp() {
 
     if (program.teams) {
         params.teams = program.teams;
+    }
+
+    if (program.bundleId) {
+        params.bundleId = program.bundleId;
     }
 
     if (program.token) {
@@ -168,7 +193,18 @@ function installrapp() {
             console.log(chalk.red('upload file not found!'));
         }
 
-        uploadApp(params);
+        if (params.bundleId) {
+            getAppDetails(params, function(app) {
+                params.latestBuildDate = app.latestBuild.dateCreated;                            
+                uploadApp(params);
+            });
+
+        
+        } else {
+            uploadApp(params);
+        }
+
+        //uploadApp(params);
 
     } else if (program.list) {
         listApps(params);

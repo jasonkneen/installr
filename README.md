@@ -25,6 +25,16 @@ $ installr list --token <YOURAPITOKEN>
 $ installr upload MyApp.ipa --token <YOURAPITOKEN> --notes "- Added some cool features" --emails "hello@bouncingfish.com" --teams "QA"
 ```
 
+## Automatically generate relase notes from git log
+
+If you want to auto-create release notes, do small commits in git, and when it comes to uploading instead of specifying the notes, specify the bundleId of the app:
+```
+$ installr upload MyApp.ipa --bundleId com.jasonkneen.myApp --token <YOURAPITOKEN> --emails "hello@bouncingfish.com" --teams "QA"
+```
+
+If you specify the bundleId, the CLI will check the last build date of the app in the Installr API, then run a git log from that date and add this to the release notes. Coming soon, the ability to override this and specify a date yourself
+
+
 Suggestions, improvements, PRs, welcome!
 
 ### Thanks to
