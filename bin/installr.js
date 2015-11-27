@@ -3,9 +3,6 @@
 // need to make this configurable
 var iTunesPath = "~/music/iTunes/iTunes\ Media/Mobile\ Applications/";
 
-// need to make this configurable
-var gitLog = 'git log --since=today --pretty="- %s"'
-
 var program = require('commander'),
     chalk = require('chalk'),
     updateNotifier = require('update-notifier'),
@@ -272,6 +269,5 @@ function installrapp() {
         listApps(program.list[0]);
     }
 }
-
 
 installrapp();
