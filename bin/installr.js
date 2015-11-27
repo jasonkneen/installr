@@ -31,6 +31,28 @@ function isJSON(str) {
     return true;
 }
 
+function getAppStatus(appToken) {
+    var r = request.get({
+        url: 'https://www.installrapp.com/apps/status/' + appToken
+    }, function(err, httpResponse, body) {
+
+        var app = JSON.parse(body);        
+
+        if (app.result == "success") {
+            console.log("Build Number: " + chalk.yellow(app.appData.buildNumber));
+            console.log("Date Created: " + chalk.yellow(app.appData.dateCreated));
+            console.log("Installr URL: " + chalk.yellow(app.appData.installrUrl));
+            console.log("Release Notes: " + chalk.yellow(app.appData.releaseNotes));
+            console.log("Title: " + chalk.yellow(app.appData.title));
+            console.log("Version: " + chalk.yellow(app.appData.versionNumber));
+        } else {
+            console.log(chalk.red("Error: check the app token is valid"));
+        }
+
+    });
+
+}
+
 function listApps(id) {
 
     console.log(chalk.blue(id ? 'Fetching apps matching ' + id : 'Fetching apps'));
@@ -56,7 +78,7 @@ function listApps(id) {
 
             function writeRow() {
                 table.push(
-                    [ chalk.white(app.id), chalk.white(app.appId),  chalk.white(app.type),  app.latestBuild.versionNumber, app.latestBuild.id, chalk.white(app.latestBuild.numberInstalled)]
+                    [chalk.white(app.id), chalk.white(app.appId), chalk.white(app.type), app.latestBuild.versionNumber, app.latestBuild.id, chalk.white(app.latestBuild.numberInstalled)]
                 );
             }
 
@@ -184,6 +206,7 @@ function installrapp() {
         .option('-t, --teams <names>', 'Comma-separated list of team names to send to')
         .option('-c, --token <token>', 'Set the installrapp API token to use')
         .option('-b, --bundleId <id>', 'The bundleId of the app')
+        .option('-s, --status <token>', 'Status of the App specified as an App Token')
 
     program.parse(process.argv);
 
@@ -207,6 +230,10 @@ function installrapp() {
 
     if (program.bundleId) {
         config.bundleId = program.bundleId;
+    }
+
+    if (program.status) {
+        getAppStatus(program.status[0]);
     }
 
     if (program.token) {

@@ -12,12 +12,27 @@ As global CLI:
 
     $ npm install -g installr
 
-## Usage
+## List apps
 
 List all apps in installr
 ```
 $ installr list --token <YOURAPITOKEN>  
 ```
+
+## List specific app
+
+List an app based on bundle ID
+```
+$ installr list com.jasonkneen.myapp --token <YOURAPITOKEN>  
+```
+
+## Get an app status
+
+Display the status based on an app token
+```
+$ installr status APPTOKEN
+```
+
 ## Upload an app
 ```
 $ installr upload MyApp.ipa --token <YOURAPITOKEN> --notes "- Added some cool features" --emails "hello@bouncingfish.com" --teams "QA"
