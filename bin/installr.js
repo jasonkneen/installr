@@ -253,7 +253,7 @@ function installrapp() {
         }
 
         if (config.bundleId) {
-            getAppDetails(config, function(app) {
+            getAppDetails(function(app) {
                 config.latestBuildDate = app.latestBuild.dateCreated;
                 uploadApp();
             });
